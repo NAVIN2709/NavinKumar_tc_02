@@ -1,9 +1,4 @@
 import React, { useState } from 'react';
-import { GoogleGenAI } from '@google/genai';
-
-const ai = new GoogleGenAI({
-  apiKey: import.meta.env.VITE_PUBLIC_GEMINI_API_KEY,
-});
 
 const IdeaForm = ({ onResult }) => {
   const [idea, setIdea] = useState({
@@ -42,20 +37,26 @@ Give a score (0–100) and detailed feedback across:
 5. Technical Feasibility
 
 End with a one-line verdict.`;
+console.log(prompt)
 
     try {
-      const response = await ai.models.generateContent({
-        model: 'gemini-1.5-flash',
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      const response = await fetch(import.meta.env.VITE_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt }),
       });
 
-      const text = response.text;
+      const data = await response.json();
+      const text = data.result;
+
       const scoreMatch = text.match(/score\s*[:\-]?\s*(\d{1,3})/i);
       const score = scoreMatch ? parseInt(scoreMatch[1]) : null;
 
       onResult({ score, feedback: text });
     } catch (error) {
-      console.error('AI evaluation failed:', error);
+      console.error('API call failed:', error);
       alert('Error evaluating idea. Try again.');
     } finally {
       setLoading(false);
