@@ -34,10 +34,7 @@ Give a score (0–100) and detailed feedback across:
 2. Uniqueness
 3. Market Potential
 4. Monetization
-5. Technical Feasibility
-
-End with a one-line verdict.`;
-console.log(prompt)
+5. Technical Feasibility`;
 
     try {
       const response = await fetch(import.meta.env.VITE_API_URL, {
